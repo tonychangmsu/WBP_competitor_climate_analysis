@@ -182,6 +182,7 @@ ELEV_M : Elevation in Meter
 * ROCKDEPTHM : Depth to bedrock (Meter)
 * SAND : Percent sand in content denoted layer (% of soil < 2mm in size)
 * SILT : Percent silt in content denoted layer (% of soil < 2mm in size)
+* ROCKVOL : Percent unattached particles 2 mm or larger in diameter that are strongly cemented or more resistant to rupture
 
 =======================================================================================
 * ERGO_GEOG : Land facet metric classification from David Theobald 
