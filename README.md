@@ -12,7 +12,9 @@ Added scatter plots and correlations (Spearman and Pearson) for all pairwise cla
 Elevational divisions were created as follows
 
 DIV1 : ELEV > 10000
+
 DIV2 : 8800 < ELEV < 9500
+
 DIV3 : ELEV < 8500
 
 Please check the "plots" folder for associated output
