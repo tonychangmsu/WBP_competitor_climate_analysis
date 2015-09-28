@@ -12,7 +12,7 @@ require(rgdal)
 require(raster)
 require(dismo)
 require(data.table)
-
+require(bit64)
 filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified.csv'
 FIA_subset = fread(filename, sep = ",", showProgress=T) 
 
