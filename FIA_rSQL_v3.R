@@ -139,7 +139,8 @@ class_trees[is.na(class_trees)] = as.numeric(0.0) #replace all the NA values wit
 #make sure all the columns are numeric
 ncols = dim(class_trees)[2]
 class_trees[,3:ncols] = as.numeric(unlist(class_trees[,3:ncols]))
-filename = 'E:\\Data_requests\\adhikari_08252015\\wbp_bbox_all_trees_classified.csv'
+class_trees[,1] = as.numeric(unlist(class_trees[,1])) #added this to allow sorting of the PLT_CNs
+filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified.csv'
 write.table(class_trees, file =sprintf('%s', filename), sep = ',', row.names = FALSE)
 
 #####################################################################

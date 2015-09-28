@@ -13,7 +13,7 @@ require(raster)
 require(dismo)
 require(data.table)
 
-filename = 'E:/Data_requests/adhikari_08252015/wbp_bbox_all_trees_classified.csv'
+filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified.csv'
 FIA_subset = fread(filename, sep = ",", showProgress=T) 
 
 #define the points of interest to extract from raster
@@ -51,6 +51,17 @@ for (i in 1:nlist){
   FIA_subset[,paste(varname)] = extracted_values #add the extracted points
 }
 
+#new added 09.23.2015 @tchang
+#adding rock volume layer
+for (i in 1:11){
+  varname = paste('ROCKVOL_L',i, sep='')
+  rasterfile = paste('E:\\Land_Facet\\CONUS_SOIL\\',varname, '.tif',sep ='')
+  data = raster(rasterfile)
+  data_clip = crop(data,s)
+  extracted_values = extract(data_clip, fia_s, method ='simple')
+  FIA_subset[,paste(varname)] = extracted_values
+}
+
 #now get the climate variables
 climate_folder = 'E:\\PRISM\\30yearnormals\\'
 varlist = c('tmin', 'tmax', 'ppt', 'aet', 'pet', 'pack', 'soilm', 'vpd')
@@ -67,7 +78,6 @@ for (i in 1:length(year)){
       data_clip = crop(data, s) #crop the data
       extracted_values = extract(data_clip, fia_s, method='simple')
       cname = toupper(paste(varlist[j],"_",month[k],"_",year[i]-30,"_",year[i],sep=""))
-  
       FIA_subset[,paste(cname)] = extracted_values #add the extracted points
     }
   }
@@ -79,9 +89,10 @@ lf_data = raster(lf_name)
 data_clip = crop(lf_data,s)
 extracted_values = extract(data_clip, fia_s, method='simple')
 cname = 'ERGO_GEOG'
-FIA_subset[,paste(cname)] = as.character(extracted_values)
+FIA_subset[,paste(cname)] = extracted_values
+#FIA_subset[,paste(cname)] = as.character(extracted_values) #don't save as characters
 
 #write out the dataset
 out = na.omit(FIA_subset)
-filename = 'E:\\Data_requests\\adhikari_08252015\\wbp_bbox_all_trees_classified_linked.csv'
+filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified_linked.csv'
 write.table(out, file =sprintf('%s', filename), sep = ',', row.names = FALSE)
