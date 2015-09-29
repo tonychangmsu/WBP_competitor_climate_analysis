@@ -1,12 +1,15 @@
 #Variable selection and subsetting
-#Author: Tony Chang
-#Date: 09.29.2015
+##Author: Tony Chang
+##Date: 09.29.2015
 
 ####Abstract:
-AH: 	"Subset the data such that we can explore the relationships of the predictor variables and basal area for 
-		PIAL"
 
-Division, elevation division = mean(data$ELEV) - sd(data$ELEV) = 8234
+AH: 	"Subset the data such that we can explore the relationships of the predictor variables and basal area for 
+		PIAL within the exclusive sub-alpine region in order to explore how important main and interactions are
+		with limited impact from lower elevation climate/competition"
+
+Division: Elevation division = mean(data$ELEV) - sd(data$ELEV) = 8234
+
 N = 876
 
 Abiotic effects:
@@ -17,7 +20,7 @@ Abiotic effects:
 
 3)	SOILM_6
 
-4)	TMAX_8
+4)	TMAX_7
 
 5)	VPD_8
 
@@ -37,7 +40,7 @@ Biotic effects:
 	
 Interactions:
 
-12)	ABLA_BA_TOTAL * TMAX_8
+12)	ABLA_BA_TOTAL * TMAX_7
 
 13)	ABLA_BA_TOTAL * PACK_4
 
