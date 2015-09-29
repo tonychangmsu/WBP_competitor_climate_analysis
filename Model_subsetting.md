@@ -8,7 +8,7 @@ AH: 	"Subset the data such that we can explore the relationships of the predicto
 		PIAL within the exclusive sub-alpine region in order to explore how important main and interactions are
 		with limited impact from lower elevation climate/competition"
 
-Division: Elevation division = mean(data$ELEV) - sd(data$ELEV) = 8234
+Division: Elevation division = mean(data$ELEV) - sd(data$ELEV) = 8234 ft
 
 N = 876
 
