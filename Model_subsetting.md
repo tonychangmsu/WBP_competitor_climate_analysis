@@ -10,7 +10,7 @@ AH: 	"Subset the data such that we can explore the relationships of the predicto
 
 Division: Elevation division = mean(data$ELEV) - sd(data$ELEV) = 8234
 
-N = 876
+N = 884
 
 Abiotic effects:
 
@@ -61,6 +61,8 @@ Interactions:
 18)    ABLA_BA_TOTAL * ROCKVOL_L1
 
 19)	OTHER_BA_TOTAL * WHC_100
+
+#########################################################
 
 Subset (high elevation model)
 $$
