@@ -69,15 +69,17 @@ plots_qa = sqldf(sprintf("SELECT * FROM plots WHERE %s AND %s", qa_conditions, b
 #now we want all the trees including within the bounding box with a DIAHTCD = 1 (meaning the tree diameter was measured for DBH) and statuscd = 1
 trees_req_cols = sprintf("trees.PLT_CN, trees.SPCD, trees.STATUSCD, trees.DIA, trees.DIA * 2.54 as 'DBH_CM', trees.HT, trees.HT * 0.3048 as 'HT_M', trees.DIA*trees.DIA *  0.005454154 * trees.TPA_UNADJ as 'BA_ACRE', trees.TPA_UNADJ")
 plots_req_cols = sprintf("plots_qa.INVYR, plots_qa.LAT, plots_qa.LON, plots_qa.ELEV, plots_qa.ELEV * 0.3048 as 'ELEV_M' , plots_qa.STATE_NAME")
-all_trees_bbox = sqldf(sprintf("SELECT %s, %s FROM trees, plots_qa WHERE (trees.PLT_CN = plots_qa.CN AND trees.DIA !='NA' AND trees.DIAHTCD =1)", trees_req_cols, plots_req_cols))
+all_trees_bbox = sqldf(sprintf("SELECT %s, %s FROM trees, plots_qa WHERE (trees.PLT_CN = plots_qa.CN AND trees.DIA !='NA' AND trees.DIAHTCD =1 AND trees.STATUSCD =1)", trees_req_cols, plots_req_cols))
+all_trees_bbox_wdead = sqldf(sprintf("SELECT %s, %s FROM trees, plots_qa WHERE (trees.PLT_CN = plots_qa.CN AND trees.DIA !='NA' AND trees.DIAHTCD =1)", trees_req_cols, plots_req_cols))
+n_dead = dim(all_trees_bbox)[1]-dim(all_trees_bbox_wdead)[1]
+#all trees = 83666, live only = 56471, dead = 27195
 
 #need two groupby, 1)groupby CN 2)groupby spcd, then count by size classes...
 select_trees = sqldf(sprintf("SELECT PLT_CN, SPCD, COUNT(SPCD) as 'TREE_TOTAL_COUNT', AVG(DIA) as 'MEAN_DBH', sqrt(variance(DIA)) as 'STDEV_DBH', SUM(TPA_UNADJ) as 'TOTAL_TPA' from all_trees_bbox WHERE (DIA > 0 AND STATUSCD = 1) GROUP BY PLT_CN, SPCD"))
 #get only live trees
 select_trees_all =sqldf(sprintf("SELECT PLT_CN, SPCD, COUNT(SPCD) as 'TREE_TOTAL_COUNT', AVG(DIA) as 'MEAN_DBH', sqrt(variance(DIA)) as 'STDEV_DBH', SUM(TPA_UNADJ) as 'TOTAL_TPA' from all_trees_bbox WHERE DIA > 0 GROUP BY PLT_CN, SPCD"))
 #lets look at summing up th tpa_unadj column
-n_dead = dim(select_trees_all)[1]-dim(select_trees)[1]
-#difference between all trees and only live trees are (live trees = 5045, dead trees = 558) #we will use only the live trees
+
 plots_tpa = sqldf(sprintf("SELECT trees.PLT_CN, COUNT(trees.PLT_CN) as 'TREE_COUNT', SUM(trees.TPA_UNADJ) as SUM_TPA FROM trees, plots_qa WHERE (trees.DIAHTCD =1 AND trees.PLT_CN = plots_qa.CN) GROUP BY trees.PLT_CN"))
 #this will be useful in linking the data for the Plot level TOTAL TPA, add it to plots_qa
 plots_qa_tpa = sqldf(sprintf("SELECT plots_qa.*, plots_tpa.SUM_TPA, plots_tpa.SUM_TPA * 2.47105 AS TPH, plots_tpa.TREE_COUNT FROM plots_qa, plots_tpa WHERE plots_qa.CN = plots_tpa.PLT_CN"))
@@ -145,7 +147,7 @@ class_trees[is.na(class_trees)] = as.numeric(0.0) #replace all the NA values wit
 ncols = dim(class_trees)[2]
 class_trees[,3:ncols] = as.numeric(unlist(class_trees[,3:ncols]))
 class_trees[,1] = as.numeric(unlist(class_trees[,1])) #added this to allow sorting of the PLT_CNs
-#total number of samples with removal of dead trees drops down to 2216
+#total number of samples with removal of dead trees drops down to 2216 from the original sample size of 2355
 filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified.csv'
 write.table(class_trees, file =sprintf('%s', filename), sep = ',', row.names = FALSE)
 

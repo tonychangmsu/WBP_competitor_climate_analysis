@@ -27,4 +27,4 @@ Moving forward with analysis to a limited subset of the n = 2379, to be exclusiv
 
 Agreement from the group on performing the full range of the sampling in order to account for environmental variability that could impact PIAL abundance.
 
-Additional consideration for the sampling year (INVYR) and considering only live trees (STATUSCD = 1) to limit analysis to only live trees. This change has reduced to total trees in all plots to from 5603 total trees to 5045 live trees (558 dead). Number of plots has remained the same.   
+Additional consideration for the sampling year (INVYR) and considering only live trees (STATUSCD = 1) to limit analysis to only live trees. This change has reduced to total trees in all plots to from 83666 total trees to 56471 live trees (27195 dead). Number of plots has reduced to 2193 due to removal of plots with only dead trees.   

@@ -23,7 +23,7 @@ due to limited sampling using the MANUAL CODE = 1 in Wyoming | an additional fil
 MANUAL <1.0 and DESIGNCD=1 was also utilized to increase sample size.
 =======================================================================================
 9/15/2015 changes: Changed the filtering parameters to use MANUAL <1.0 and DESIGNCD=1 as suggested from Jim Menlove USGS Ecologist/Analyst at the RMRS.
-
+9/30/2015 changes: Changed the filtering parameters for trees to include only trees where STATUSCD = 1 to only consider live trees
 Also integrated into the query are two additional variables | Basal Area and Stand Density Index defined as BA = 0.005454 * (DIA/2) when TREE.DIAHTCD =1
 
 =======================================================================================
@@ -143,6 +143,7 @@ Units for each field are noted as follows:
 # Plot information 
 PLT_CN : 13-14 digit plot identification code
 STATE_NAME : Name of US State
+INVYR : Year when the plot inventory was taken
 LAT : North Latitude WGS84 degree
 LON : West Longitude WGS84 degree
 ELEV : Elevation in Feet
