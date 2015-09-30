@@ -1,4 +1,4 @@
-#####################
+##############################################################################################################################
 #Title: FIA_rSQL.R
 #Version: 4.0
 #Author: Tony Chang
@@ -19,7 +19,7 @@
 #           defined as BA = 0.005454 * (DIA/2) when TREE.DIAHTCD =1
 #         
 #           9/30/2015 changes: Consideration for the year and trees that are only alive during the sampling process
-#####################
+##############################################################################################################################
 
 #######LOADING LIBRARIES##############
 #install.packages("data.table") #uncomment these to install packages
@@ -89,23 +89,24 @@ unique_trees = sqldf(sprintf("SELECT DISTINCT SPCD from select_trees "))
 t_list = sqldf(sprintf("SELECT GENUS, SPECIES, COMMON_NAME, spcds.SPCD FROM spcds JOIN unique_trees ON spcds.SPCD = unique_trees.SPCD"))
 #if we include all the plots then we get 17 tree species. #we may be only interested in the trees that exist with WBP however.
 
-######whitebark pine queries######
+############whitebark pine queries##################
+######this is changed to just allow all trees######
 #if so, then we need to query for the whitebark pine and the coexisting trees...
 #now query to find where species is the latin name
-wbp_code = sqldf("SELECT SPCD FROM spcds WHERE SPECIES = 'albicaulis' AND GENUS = 'Pinus'") #this queries for the species albicaulis
+#wbp_code = sqldf("SELECT SPCD FROM spcds WHERE SPECIES = 'albicaulis' AND GENUS = 'Pinus'") #this queries for the species albicaulis
 #now query where tree is equal to this species code
-wbp = sqldf(sprintf("SELECT * FROM all_trees_bbox WHERE SPCD = %s",wbp_code))
-wbp_counts = sqldf("SELECT PLT_CN, COUNT (PLT_CN) as wbp_occurances FROM wbp GROUP BY PLT_CN")
+#wbp = sqldf(sprintf("SELECT * FROM all_trees_bbox WHERE SPCD = %s",wbp_code))
+#wbp_counts = sqldf("SELECT PLT_CN, COUNT (PLT_CN) as wbp_occurances FROM wbp GROUP BY PLT_CN")
 # group by the PLT_CN to get all the treed sub-plots within PLOT
 #from here we can join this with the 'plots' variable that has the topographic information 
 #now join to the plots that match
-wbp_plots = sqldf("SELECT * FROM wbp_counts, plots_qa_tpa WHERE wbp_counts.PLT_CN=plots_qa_tpa.CN")
-unique_trees_wbp = sqldf(sprintf("SELECT DISTINCT select_trees.SPCD from select_trees, wbp_plots WHERE select_trees.PLT_CN = wbp_plots.PLT_CN"))
-t_list_wbp = sqldf(sprintf("SELECT GENUS, SPECIES, COMMON_NAME, spcds.SPCD FROM spcds JOIN unique_trees_wbp ON spcds.SPCD = unique_trees_wbp.SPCD"))
+#wbp_plots = sqldf("SELECT * FROM wbp_counts, plots_qa_tpa WHERE wbp_counts.PLT_CN=plots_qa_tpa.CN")
+#unique_trees_wbp = sqldf(sprintf("SELECT DISTINCT select_trees.SPCD from select_trees, wbp_plots WHERE select_trees.PLT_CN = wbp_plots.PLT_CN"))
+#t_list_wbp = sqldf(sprintf("SELECT GENUS, SPECIES, COMMON_NAME, spcds.SPCD FROM spcds JOIN unique_trees_wbp ON spcds.SPCD = unique_trees_wbp.SPCD"))
 #There are only 9 species of trees that may coexist in a plot where WBP is present.
 #I believe it is a good idea to only use these species for the search. This I will add to the metadata 
 
-nrows = dim(t_list_wbp)[1]
+nrows = dim(t_list)[1]
 spcd_list = character(nrows)
 names_list = character(nrows) #going to make a list with 8 elements
 sql_cmd = character(nrows)
@@ -114,10 +115,10 @@ n_metrics = 7
 class = c(' DIA <= 4 ',' DIA > 4 AND DIA <= 8 ',' DIA > 8 AND DIA <= 12 ',' DIA > 12 ')
 for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nrows)
 {
-  g = substr(t_list_wbp$GENUS[i],1,2) #get the first 2 letters of the genus for the substring function
-  s = substr(t_list_wbp$SPECIES[i],1,2) #get the first 2 letters of the string
+  g = substr(t_list$GENUS[i],1,2) #get the first 2 letters of the genus for the substring function
+  s = substr(t_list$SPECIES[i],1,2) #get the first 2 letters of the string
   names_list[i] = toupper(paste(g,s, sep ="")) #concatenate the two variables and make them upper case then put into the names_list
-  spcd_list[i] = t_list_wbp$SPCD[i] #fill spcd_list array with codes of species to create query
+  spcd_list[i] = t_list$SPCD[i] #fill spcd_list array with codes of species to create query
   temp_sql_cmd = character(length(class)+n_metrics) #generate a temporary array to store sql commands for each class of tree
   temp_sql_cmd[1] = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' THEN PLT_CN END) AS ',names_list[i],'_TOTAL', sep="") #repeat this for all iterations
   #now generate a summary of the average DBH and standard deviation of all the trees in cm 
@@ -135,14 +136,9 @@ for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nro
   { 
     #implement another for loop for each class type
     #adding an if statement for PIAL so we can count up the BA_M2HA for all within the size class
-    if (names_list[i] == "PIAL"){
-      PIAL_first = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN PLT_CN END) AS ',names_list[i],'_CLASS',j, sep="") #repeat this for all iterations
-      PIAL_second = paste('SUM(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN BA_ACRE END) * 0.2296  AS ',names_list[i],'_CLASS',j, '_BA_M2HA', sep="") #repeat this for all iterations
-      temp_sql_cmd[j+n_metrics] = paste(PIAL_first, PIAL_second, sep=', ')    
-    }
-    else{
-      temp_sql_cmd[j+n_metrics] = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN PLT_CN END) AS ',names_list[i],'_CLASS',j, sep="") #repeat this for all iterations   
-    }
+      sumry_first = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN PLT_CN END) AS ',names_list[i],'_CLASS',j, sep="") #repeat this for all iterations
+      sumry_second = paste('SUM(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN BA_ACRE END) * 0.2296  AS ',names_list[i],'_CLASS',j, '_BA_M2HA', sep="") #repeat this for all iterations
+      temp_sql_cmd[j+n_metrics] = paste(sumry_first, sumry_second, sep=', ')    
   }
   sql_cmd[i] = paste(temp_sql_cmd, collapse=', ') #collapse the temporary array as a single string element for the sql_cmd
 }
@@ -150,7 +146,6 @@ for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nro
 sql_cmd_final = paste(sql_cmd, collapse=', ') #collapse all the string elements to a single string for the query
 
 class_trees = sqldf(sprintf("SELECT PLT_CN, STATE_NAME, INVYR, LAT, LON, ELEV, ELEV_M, COUNT(PLT_CN) AS ALL_TREES_TOTAL, SUM(BA_ACRE) * 0.2296 AS ALL_TREES_BA_M2HA, %s FROM %s GROUP BY PLT_CN",sql_cmd_final,db_name)) #query and create the pivot table
-#it should be noted that all trees are counted, not just the tree species that co-occur with PIAL designated by the t_list_wbp variable
 class_trees[is.na(class_trees)] = as.numeric(0.0) #replace all the NA values with 0
 #make sure all the columns are numeric
 ncols = dim(class_trees)[2]

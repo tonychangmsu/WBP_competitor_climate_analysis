@@ -136,20 +136,19 @@ where n is the number of trees
 For reference see
 http://oak.snr.missouri.edu/forestry_functions/qmd.php
 ========================================================================================
-
-
+========================================================================================
 Units for each field are noted as follows:
 ========================================================================================
 # Plot information 
-PLT_CN : 13-14 digit plot identification code
-STATE_NAME : Name of US State
-INVYR : Year when the plot inventory was taken
-LAT : North Latitude WGS84 degree
-LON : West Longitude WGS84 degree
-ELEV : Elevation in Feet
-ELEV_M : Elevation in Meter
-=======================================================================================
+* PLT_CN : 13-14 digit plot identification code
+* STATE_NAME : Name of US State
+* INVYR : Year when the plot inventory was taken
+* LAT : North Latitude WGS84 degree
+* LON : West Longitude WGS84 degree
+* ELEV : Elevation in Feet
+* ELEV_M : Elevation in Meter
 
+=======================================================================================
 # Tree data (response data)
 * tree_abbreviation_TOTAL : Total count of specific tree species at plot
 * tree_abbreviation_AVG_DBH_CM : Mean DBH of all specific tree species at plot (centimeters)
@@ -162,6 +161,26 @@ ELEV_M : Elevation in Meter
 * tree_abbreviation_CLASS2 : Count of CLASS2 trees at plot
 * tree_abbreviation_CLASS3 : Count of CLASS3 trees at plot
 * tree_abbreviation_CLASS4 : Count of CLASS4 trees at plot
+* tree_abbreviation_CLASS1_BA_M2HA : Basal areas of CLASS1 trees at plot (meters squared per hectare)
+* tree_abbreviation_CLASS2_BA_M2HA : Basal areas of CLASS2 trees at plot (meters squared per hectare)
+* tree_abbreviation_CLASS3_BA_M2HA : Basal areas of CLASS3 trees at plot (meters squared per hectare)
+* tree_abbreviation_CLASS4_BA_M2HA : Basal areas of CLASS4 trees at plot (meters squared per hectare)
+
+tree_abbreviations represent the following list
+
+          GENUS      SPECIES           COMMON_NAME SPCD tree_abbreviation
+1.        Pinus   albicaulis        whitebark pine  101 PIAL
+2.        Abies   lasiocarpa         subalpine fir   19 ABLA
+3.        Pinus     contorta        lodgepole pine  108 PICO
+4.        Picea  engelmannii      Engelmann spruce   93 PIEN
+5.        Pinus     flexilis           limber pine  113 PIFL
+6.        Pinus    ponderosa        ponderosa pine  122 PIPO
+7.        Picea      pungens           blue spruce   96 PIPU
+8.      Populus angustifolia narrowleaf cottonwood  749 POAN
+9.      Populus  balsamifera      black cottonwood  747 POBA
+10.     Populus    deltoides     plains cottonwood  745 PODE
+11.     Populus  tremuloides         quaking aspen  746 POTR
+12. Pseudotsuga    menziesii           Douglas-fir  202 PSME
 
 =======================================================================================
 # Climate data (predictor data)
@@ -201,7 +220,6 @@ VALUE | LABEL
 33 | LOWER_SLOPE_WARM
 41 | VALLEY
 42 | VALLEY_NARROW
-
 
 ##### Please send questions regarding this data to Tony Chang or Arjun Adhikari at
 ##### tony.chang@msu.montana.edu  | arjun.adhikari@montana.edu
