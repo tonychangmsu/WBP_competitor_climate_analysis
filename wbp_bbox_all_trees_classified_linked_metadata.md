@@ -182,6 +182,8 @@ tree_abbreviations represent the following list
 11.     Populus  tremuloides         quaking aspen  746 POTR
 12. Pseudotsuga    menziesii           Douglas-fir  202 PSME
 
+Note: tree_abbreviation = ALL_TREES refers to the sum of the 12 listed species
+
 =======================================================================================
 # Climate data (predictor data)
 * TMIN1-12_startyear_endyear : 30 year normal minimum temperatures in C 

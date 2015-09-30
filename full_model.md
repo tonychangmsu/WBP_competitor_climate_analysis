@@ -1,6 +1,6 @@
 #Title: Full_model.md
-##Author: Tony Chang, Katie Ireland
-##Date: 09.30.2015
+###Author: Tony Chang, Katie Ireland
+###Date: 09.30.2015
 
 ####Abstract:
 Full model of climate/species interaction for determining live PIAL abundances
