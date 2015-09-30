@@ -86,7 +86,7 @@ plots_qa_tpa = sqldf(sprintf("SELECT plots_qa.*, plots_tpa.SUM_TPA, plots_tpa.SU
 
 #okay so now one solution is just to get a list of all the unique species from which we'd like to build columns from
 unique_trees = sqldf(sprintf("SELECT DISTINCT SPCD from select_trees "))
-t_list = sqldf(sprintf("SELECT GENUS, SPECIES,COMMON_NAME, spcds.SPCD FROM spcds JOIN unique_trees ON spcds.SPCD = unique_trees.SPCD"))
+t_list = sqldf(sprintf("SELECT GENUS, SPECIES, COMMON_NAME, spcds.SPCD FROM spcds JOIN unique_trees ON spcds.SPCD = unique_trees.SPCD"))
 #if we include all the plots then we get 17 tree species. #we may be only interested in the trees that exist with WBP however.
 
 ######whitebark pine queries######
@@ -134,14 +134,23 @@ for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nro
   for (j in 1:length(class))
   { 
     #implement another for loop for each class type
-    temp_sql_cmd[j+n_metrics] = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN PLT_CN END) AS ',names_list[i],'_CLASS',j, sep="") #repeat this for all iterations   
+    #adding an if statement for PIAL so we can count up the BA_M2HA for all within the size class
+    if (names_list[i] == "PIAL"){
+      PIAL_first = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN PLT_CN END) AS ',names_list[i],'_CLASS',j, sep="") #repeat this for all iterations
+      PIAL_second = paste('SUM(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN BA_ACRE END) * 0.2296  AS ',names_list[i],'_CLASS',j, '_BA_M2HA', sep="") #repeat this for all iterations
+      temp_sql_cmd[j+n_metrics] = paste(PIAL_first, PIAL_second, sep=', ')    
+    }
+    else{
+      temp_sql_cmd[j+n_metrics] = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN PLT_CN END) AS ',names_list[i],'_CLASS',j, sep="") #repeat this for all iterations   
+    }
   }
   sql_cmd[i] = paste(temp_sql_cmd, collapse=', ') #collapse the temporary array as a single string element for the sql_cmd
 }
 #lets write the pivot table as a single string to put into our sqldf command for reuse later
 sql_cmd_final = paste(sql_cmd, collapse=', ') #collapse all the string elements to a single string for the query
 
-class_trees = sqldf(sprintf("SELECT PLT_CN, STATE_NAME, INVYR, LAT, LON, ELEV, ELEV_M, %s FROM %s GROUP BY PLT_CN",sql_cmd_final,db_name)) #query and create the pivot table
+class_trees = sqldf(sprintf("SELECT PLT_CN, STATE_NAME, INVYR, LAT, LON, ELEV, ELEV_M, COUNT(PLT_CN) AS ALL_TREES_TOTAL, SUM(BA_ACRE) * 0.2296 AS ALL_TREES_BA_M2HA, %s FROM %s GROUP BY PLT_CN",sql_cmd_final,db_name)) #query and create the pivot table
+#it should be noted that all trees are counted, not just the tree species that co-occur with PIAL designated by the t_list_wbp variable
 class_trees[is.na(class_trees)] = as.numeric(0.0) #replace all the NA values with 0
 #make sure all the columns are numeric
 ncols = dim(class_trees)[2]
