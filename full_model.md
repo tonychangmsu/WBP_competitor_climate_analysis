@@ -24,7 +24,7 @@ Total number of variables in the full model considering all competitors is: 	39 
 ###Addition as of 09.30.2015 @tchang and @kgutzwiller, Updated at 3:03pm
 ###Due to interest of differing size classes and the advantages of built in SAS functions that is accepted by the literature, four models may be considered using only size classes. This would further allow consideration of intraspecific species competition
 
-#for PIAL_CLASSN
+####for PIAL_CLASSN
 where N is 1 through 4
 $$
 \begin{equation}
@@ -40,3 +40,5 @@ SOILM_6_1980_2010 + SAND_L1 + ROCKVOL_L1 + PACK_4_1980_2010 + VPD_8_1980_2010 + 
 
 \end{equation}
 $$
+
+Total number of predictor variables per class count is 40 without removal from preliminary VIF analysis.
