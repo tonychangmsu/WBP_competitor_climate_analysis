@@ -6,7 +6,7 @@
 This file describes the attribute fields of the wbp_bbox_all_trees_classified_linked_08272015.csv 
 file for reference and analysis. All response variables in this file were derived from the FIA
 dataset (http://apps.fs.fed.us/fiadb-downloads/datamart.html)
-using FIA_rSQL_v2_1.R script that will be posted on Github shortly for reproducibility. 
+using FIA_rSQL.R script that will be posted on Github shortly for reproducibility. 
 
 This selection of response variables are bounded by the defined GYE bounding box of 
 
@@ -25,7 +25,7 @@ MANUAL <1.0 and DESIGNCD=1 was also utilized to increase sample size.
 9/15/2015 changes: Changed the filtering parameters to use MANUAL <1.0 and DESIGNCD=1 as suggested from Jim Menlove USGS Ecologist/Analyst at the RMRS.
 9/30/2015 changes: Changed the filtering parameters for trees to include only trees where STATUSCD = 1 to only consider live trees
 Also integrated into the query are two additional variables | Basal Area and Stand Density Index defined as BA = 0.005454 * (DIA/2) when TREE.DIAHTCD =1
-
+10/30/2015 changes: One outlier was located due to AWC100 = 100 suggesting plot was fuzzed into a water body. This point was removed and dataset updated. Total sample size is 2192
 =======================================================================================
 Data was further filtered for community analysis to only include competitors that 
 co-occured where at least 1 Pinus albicaulis (whitebark pine) tree was found present. This does not include the FIA SEEDLING dataset. This was scheme was used to address the specific analysis of species/abiotic competitive interaction with Pinus albicaulis.
