@@ -94,8 +94,9 @@ FIA_subset[,paste(cname)] = extracted_values
 
 #write out the dataset
 out = na.omit(FIA_subset)
-#post-hoc change at site PLT_CN = 5379587010690, sees that the fuzzing landed the point into a water body. 
-out = out[-2114]
+#post-hoc change at site PLT_CN = 5379587010690 and 11795987010690, sees that the fuzzing landed the point into a water body. 
+out = out[-19]
+out = out[-2113] 
 #last check
 dim(out)
 filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified_linked.csv'
