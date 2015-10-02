@@ -151,9 +151,21 @@ class_trees[is.na(class_trees)] = as.numeric(0.0) #replace all the NA values wit
 ncols = dim(class_trees)[2]
 class_trees[,3:ncols] = as.numeric(unlist(class_trees[,3:ncols]))
 class_trees[,1] = as.numeric(unlist(class_trees[,1])) #added this to allow sorting of the PLT_CNs
+
+#last check before adding the abiotic are removal of off PLT_CNs where values of abiotic variables seemed strange
+#PLT_CN 
+bad_cns = c(5379587010690,11795987010690)
+#bad_cns = c(5379587010690,11795987010690,37275577010690,2322590010690,5429042010690,4721383010690,40389476010690)
+#find the bad CNs and plot the points and look at the environmental variables
+v = c()
+for (i in 1:length(bad_cns)){
+  v = c(v,sprintf("PLT_CN != %s",bad_cns[i])) 
+}
+query = paste(v, collapse=' AND ')
+out = sqldf(sprintf("SELECT * FROM class_trees WHERE %s", query))
 #total number of samples with removal of dead trees drops down to 2216 from the original sample size of 2355
 filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified.csv'
-write.table(class_trees, file =sprintf('%s', filename), sep = ',', row.names = FALSE)
+write.table(out, file =sprintf('%s', filename), sep = ',', row.names = FALSE)
 
 #####################################################################
 ###########################STOP######################################

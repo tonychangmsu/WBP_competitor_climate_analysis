@@ -31,7 +31,7 @@ Data was further filtered for community analysis to only include competitors tha
 co-occured where at least 1 Pinus albicaulis (whitebark pine) tree was found present. This does not include the FIA SEEDLING dataset. This was scheme was used to address the specific analysis of species/abiotic competitive interaction with Pinus albicaulis.
 
 Counts of trees class definitions are as follows   
-CLASS1 = ' DIA > 1 AND DIA <= 4 '
+CLASS1 = ' DIA >= 1 AND DIA <= 4 '
 CLASS2 = ' DIA > 4 AND DIA <= 8 '
 CLASS3 = ' DIA > 8 AND DIA <= 12 '
 CLASS4 = ' DIA > 12 '
