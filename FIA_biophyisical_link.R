@@ -94,8 +94,8 @@ FIA_subset[,paste(cname)] = extracted_values
 
 #write out the dataset
 out = na.omit(FIA_subset)
-#some environmental factors seem off (should not be negative, convert these to 0)
-#abio_fix = c(AET_12_1950_1980, PACK_5_1950_1980, PACK_6_1950_1980, SOILM_7_1950_1980, SOILM_11_1950_1980, PACK_5_1980_2010,PACK_6_1980_2010, PACK_7_1980_2010, SOILM_8_1980_2010)  
+#some environmental factors seem off (should not be negative, convert these to 0) 
+#abio_fix = c('AET_12_1950_1980', 'PACK_5_1950_1980', 'PACK_6_1950_1980', 'SOILM_7_1950_1980', 'SOILM_11_1950_1980', 'PACK_5_1980_2010','PACK_6_1980_2010', 'PACK_7_1980_2010', 'SOILM_8_1980_2010')  
 out$AET_12_1950_1980[out$AET_12_1950_1980<0] = 0
 out$PACK_5_1950_1980[out$PACK_5_1950_1980<0] = 0
 out$PACK_6_1950_1980[out$PACK_6_1950_1980<0] = 0
@@ -105,6 +105,7 @@ out$PACK_5_1980_2010[out$PACK_5_1980_2010<0] = 0
 out$PACK_6_1980_2010[out$PACK_6_1980_2010<0] = 0
 out$PACK_7_1980_2010[out$PACK_7_1980_2010<0] = 0
 out$SOILM_8_1980_2010[out$SOILM_8_1980_2010<0] = 0
+#loop or apply would be better, but for now this works @tchang 10.02.2015
 #post-hoc change at site PLT_CN = 5379587010690 and 11795987010690, sees that the fuzzing landed the point into a water body. 
 #out = out[-19] #remove occured in FIA_rSQL.R, so unneeded
 #out = out[-2113] 

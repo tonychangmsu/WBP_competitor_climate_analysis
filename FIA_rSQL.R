@@ -41,6 +41,12 @@ tree_cols = colnames(read.csv(file = treefile, nrows = 1)) #get the column names
 tree_scols = c('CN', 'PLT_CN', 'PLOT', 'SPCD', 'TREE', 'DIA', 'HT', 'DIAHTCD', 'TPA_UNADJ', 'STATUSCD') #and create a list of the column you want to reduce csv load time
 trees = fread(treefile, sep = ",", select = tree_scols, showProgress=T)
 
+#require this later for Basal area calculations
+filename = "E:\\FIA\\POP_STRATUM.CSV"
+pop_cols = colnames(read.csv(file = filename, nrows = 1)) #get the column names within plots to look up
+pop_scols = c("CN", "EXPNS") #and create a list of the column you want to reduce csv load time
+pop = fread(filename, sep = ",", select = pop_scols, showProgress=T) 
+
 #get the species code for each tree
 spcdfile = "E:\\FIA\\REF_SPECIES.CSV"
 spcds = fread(spcdfile, sep = ',')
@@ -89,6 +95,47 @@ unique_trees = sqldf(sprintf("SELECT DISTINCT SPCD from select_trees "))
 t_list = sqldf(sprintf("SELECT GENUS, SPECIES, COMMON_NAME, spcds.SPCD FROM spcds JOIN unique_trees ON spcds.SPCD = unique_trees.SPCD"))
 #if we include all the plots then we get 17 tree species. #we may be only interested in the trees that exist with WBP however.
 
+####################################################
+############new 10.06.2015##########################
+####################################################
+#abstract: subsetted plots are using a variable plot sized due to lack of standardization (i.e MANUALCD !=1)
+#          this creates disagreement in plot size and representaion of the small sized class tree counts. 
+#          therefore, upon analysis of CLASS1 trees with predictor variables, a non-uniform plot size is not being account for (108 plots out of 2216). 
+#          to create a more uniform dataset for statistical analysis, variable sized plots were removed (loss of 378 wbp tree counts from 37 plots (with WBP) all in WY except for one in MT ).
+#          this must note that inference for CLASS1 tree is a sample population derived from a subplot scale (6.8 ft radius (FIA MANUAL pg. 1-11))
+#          whereas all other CLASS tree model represent a sample population derived from a plot scale (24 ft radius subpplot (FIA MANUAL pg. 1-11))
+######################################################################################
+
+#attempting to remove variable sized subplots to attain a more uniform subset of sample plots
+#to do 
+#generate map and table of variable sized plots and representative diameters
+#remove variable sized plots from all_trees_bbox
+#reclassify trees by CLASS1 <=4.9
+#and CLASS 2 > 4.9 AND <= 8
+#relink subset
+
+dT = sqldf("SELECT PLT_CN, TPA_UNADJ, LAT, LON, ELEV FROM all_trees_bbox GROUP BY PLT_CN")
+dis_TPA = sqldf("SELECT TPA_UNADJ, LAT, LON, ELEV, COUNT(TPA_UNADJ) as counts_TPA FROM dT GROUP BY TPA_UNADJ")
+var_TPA = c(8.024060,12.036090, 24.072190 ,99.953710, 149.930560)
+var_trees = sqldf("SELECT * FROM all_trees_bbox WHERE (TPA_UNADJ = 8.024060 OR TPA_UNADJ = 12.036090 OR TPA_UNADJ = 24.072190 OR TPA_UNADJ = 99.953710 OR TPA_UNADJ = 149.930560)")
+wbp_var = sqldf("SELECT * FROM var_trees WHERE SPCD = 101")
+elev_var = sqldf("SELECT * FROM wbp_var GROUP by PLT_CN")
+var_TPA_plts = sqldf("SELECT * FROM dT WHERE (TPA_UNADJ = 8.024060 OR TPA_UNADJ = 12.036090 OR TPA_UNADJ = 24.072190 OR TPA_UNADJ = 99.953710 OR TPA_UNADJ = 149.930560)")
+std_TPA_plts = sqldf("SELECT * FROM dT WHERE NOT(TPA_UNADJ = 8.024060 OR TPA_UNADJ = 12.036090 OR TPA_UNADJ = 24.072190 OR TPA_UNADJ = 99.953710 OR TPA_UNADJ = 149.930560)")
+sm_plt_trees = sqldf("SELECT * FROM all_trees_bbox WHERE (TPA_UNADJ = 74.965282 OR TPA_UNADJ = 74.965280)")
+lg_plt_trees = sqldf("SELECT * FROM all_trees_bbox WHERE (TPA_UNADJ = 6.018046 OR TPA_UNADJ = 6.018050)")
+
+#plot(std_TPA_plts$LON, std_TPA_plts$LAT, pch = 'o', col = 'green')
+#par(new=TRUE)
+#plot(var_TPA_plts$LON, var_TPA_plts$LAT, pch = 'x', col = 'red')
+#par(new=FALSE)
+
+#hist(all_trees_bbox$TPA_UNADJ)# view histogram to see how many variable sized plots exist
+
+#so subset all_trees_bbox to only include plots where the TPA_UNADJ = 6.018046 or 6.018050 or 74.965282 or 74.965280
+all_trees_bbox$TPA_UNADJ = round(all_trees_bbox$TPA_UNADJ ,5) #round this to the nearest 5th decimal
+all_trees_bbox_filter = sqldf("SELECT * FROM all_trees_bbox WHERE (TPA_UNADJ = 74.96528 OR TPA_UNADJ = 6.01805)")
+
 ############whitebark pine queries##################
 ######this is changed to just allow all trees######
 #if so, then we need to query for the whitebark pine and the coexisting trees...
@@ -110,9 +157,9 @@ nrows = dim(t_list)[1]
 spcd_list = character(nrows)
 names_list = character(nrows) #going to make a list with 8 elements
 sql_cmd = character(nrows)
-db_name = 'all_trees_bbox'
+db_name = 'all_trees_bbox_filter'
 n_metrics = 7
-class = c(' DIA <= 4 ',' DIA > 4 AND DIA <= 8 ',' DIA > 8 AND DIA <= 12 ',' DIA > 12 ')
+class = c(' DIA <= 4.9 ',' DIA > 4.9 AND DIA <= 8 ',' DIA > 8 AND DIA <= 12 ',' DIA > 12 ')
 for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nrows)
 {
   g = substr(t_list$GENUS[i],1,2) #get the first 2 letters of the genus for the substring function
@@ -135,7 +182,7 @@ for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nro
   for (j in 1:length(class))
   { 
     #implement another for loop for each class type
-    #adding an if statement for PIAL so we can count up the BA_M2HA for all within the size class
+    #adding an if statement so we can count up the BA_M2HA for all within the size class
       sumry_first = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN PLT_CN END) AS ',names_list[i],'_CLASS',j, sep="") #repeat this for all iterations
       sumry_second = paste('SUM(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN BA_ACRE END) * 0.2296  AS ',names_list[i],'_CLASS',j, '_BA_M2HA', sep="") #repeat this for all iterations
       temp_sql_cmd[j+n_metrics] = paste(sumry_first, sumry_second, sep=', ')    
