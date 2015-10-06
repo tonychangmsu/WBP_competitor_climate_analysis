@@ -23,20 +23,29 @@ due to limited sampling using the MANUAL CODE = 1 in Wyoming | an additional fil
 MANUAL <1.0 and DESIGNCD=1 was also utilized to increase sample size.
 =======================================================================================
 9/15/2015 changes: Changed the filtering parameters to use MANUAL <1.0 and DESIGNCD=1 as suggested from Jim Menlove USGS Ecologist/Analyst at the RMRS.
-
+9/30/2015 changes: Changed the filtering parameters for trees to include only trees where STATUSCD = 1 to only consider live trees
 Also integrated into the query are two additional variables | Basal Area and Stand Density Index defined as BA = 0.005454 * (DIA/2) when TREE.DIAHTCD =1
+9/30/2015 changes: Two outlier was located due to AWC100 = 100 suggesting plot was fuzzed into a water body. This point was removed and dataset updated. Total sample size is 2191
+10/06/2015 changes: FIA classifies trees of DIA <= 4.9" as smaller trees and uses a different microplot size to sample the counts, this was accounted for through re-classing CLASS1
 
 =======================================================================================
-Data was further filtered for community analysis to only include competitors that 
-co-occured where at least 1 Pinus albicaulis (whitebark pine) tree was found present. This does not include the FIA SEEDLING dataset. This was scheme was used to address the specific analysis of species/abiotic competitive interaction with Pinus albicaulis.
+Data was further filtered for community analysis to include all competitors. 
+This does not include the FIA SEEDLING dataset. 
+This was scheme was used to address the specific analysis of species/abiotic competitive interaction with Pinus albicaulis.
 
 Counts of trees class definitions are as follows   
-CLASS1 = ' DIA > 1 AND DIA <= 4 '
-CLASS2 = ' DIA > 4 AND DIA <= 8 '
+CLASS1 = ' DIA > 1 AND DIA <= 4.9 '
+CLASS2 = ' DIA > 4.9 AND DIA <= 8 '
 CLASS3 = ' DIA > 8 AND DIA <= 12 '
 CLASS4 = ' DIA > 12 '
 
 where DIA is the diameter at breast height measured in inches. 
+
+Subsetted plots use a variable plot sized due to lack of standardization (i.e MANUALCD !=1) this creates disagreement in plot size and representaion of the small sized class tree counts. 
+therefore, upon analysis of CLASS1 trees with predictor variables, a non-uniform plot size is not being account for (108 plots out of 2216). 
+to create a more uniform dataset for statistical analysis, variable sized plots were removed (loss of 378 wbp tree counts from 37 plots (with WBP) all in WY except for one in MT ).
+this must note that inference for CLASS1 tree is a sample population derived from a subplot scale (6.8 ft radius (FIA MANUAL pg. 1-11))
+whereas all other CLASS tree model represent a sample population derived from a plot scale (24 ft radius subpplot (FIA MANUAL pg. 1-11))
 
 Climate data were extracted for 30 year normals per month from the 30 arc-second spatial 
 resolution PRISM climate dataset (http://www.prism.oregonstate.edu/) for two time periods
