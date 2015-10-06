@@ -178,19 +178,19 @@ Units for each field are noted as follows:
 
 tree_abbreviations represent the following list
 
-			GENUS      SPECIES           COMMON_NAME SPCD tree_abbreviation
-			Pinus   albicaulis        whitebark pine  101 PIAL
-			Abies   lasiocarpa         subalpine fir   19 ABLA
-			Pinus     contorta        lodgepole pine  108 PICO
-			Picea  engelmannii      Engelmann spruce   93 PIEN
-			Pinus     flexilis           limber pine  113 PIFL
-			Pinus    ponderosa        ponderosa pine  122 PIPO
-			Picea      pungens           blue spruce   96 PIPU
-			Populus angustifolia narrowleaf cottonwood  749 POAN
-			Populus  balsamifera      black cottonwood  747 POBA
-			Populus    deltoides     plains cottonwood  745 PODE
-			Populus  tremuloides         quaking aspen  746 POTR
-			Pseudotsuga    menziesii           Douglas-fir  202 PSME
+			GENUS		SPECIES			COMMON_NAME 			SPCD tree_abbreviation
+			Pinus   	albicaulis		whitebark pine  		101 PIAL
+			Abies   	lasiocarpa		subalpine fir   		19 ABLA
+			Pinus     	contorta		lodgepole pine  		108 PICO
+			Picea  		engelmannii		Engelmann spruce   		93 PIEN
+			Pinus     	flexilis		limber pine  			113 PIFL
+			Pinus    	ponderosa		ponderosa pine  		122 PIPO
+			Picea      	pungens			blue spruce   			96 PIPU
+			Populus 	angustifolia	narrowleaf cottonwood  	749 POAN
+			Populus  	balsamifera		black cottonwood  		747 POBA
+			Populus    	deltoides		plains cottonwood  		745 PODE
+			Populus  	tremuloides		quaking aspen  			746 POTR
+			Pseudotsuga	menziesii		Douglas-fir  			202 PSME
 
 Note: tree_abbreviation = ALL_TREES refers to the sum of the 12 listed species
 
