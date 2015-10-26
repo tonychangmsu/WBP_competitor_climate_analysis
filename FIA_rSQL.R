@@ -106,13 +106,14 @@ t_list = sqldf(sprintf("SELECT GENUS, SPECIES, COMMON_NAME, spcds.SPCD FROM spcd
 #          whereas all other CLASS tree model represent a sample population derived from a plot scale (24 ft radius subpplot (FIA MANUAL pg. 1-11))
 ######################################################################################
 
-#attempting to remove variable sized subplots to attain a more uniform subset of sample plots
-#to do 
-#generate map and table of variable sized plots and representative diameters
-#remove variable sized plots from all_trees_bbox
-#reclassify trees by CLASS1 <=4.9
-#and CLASS 2 > 4.9 AND <= 8
-#relink subset
+# attempting to remove variable sized subplots to attain a more uniform subset of sample plots
+# however, small plots for sub 5" trees measured at 6.8' radius microplot are still prevalent and must be dealt with seperately using the 
+# TPA adjustments (see below). 
+# generate map and table of variable sized plots and representative diameters
+# remove variable sized plots from all_trees_bbox
+# reclassify trees by CLASS1 <=4.9
+# and CLASS 2 > 4.9 AND <= 8
+# relink subset
 
 dT = sqldf("SELECT PLT_CN, TPA_UNADJ, LAT, LON, ELEV FROM all_trees_bbox GROUP BY PLT_CN")
 dis_TPA = sqldf("SELECT TPA_UNADJ, LAT, LON, ELEV, COUNT(TPA_UNADJ) as counts_TPA FROM dT GROUP BY TPA_UNADJ")
@@ -124,11 +125,25 @@ var_TPA_plts = sqldf("SELECT * FROM dT WHERE (TPA_UNADJ = 8.024060 OR TPA_UNADJ 
 std_TPA_plts = sqldf("SELECT * FROM dT WHERE NOT(TPA_UNADJ = 8.024060 OR TPA_UNADJ = 12.036090 OR TPA_UNADJ = 24.072190 OR TPA_UNADJ = 99.953710 OR TPA_UNADJ = 149.930560)")
 sm_plt_trees = sqldf("SELECT * FROM all_trees_bbox WHERE (TPA_UNADJ = 74.965282 OR TPA_UNADJ = 74.965280)")
 lg_plt_trees = sqldf("SELECT * FROM all_trees_bbox WHERE (TPA_UNADJ = 6.018046 OR TPA_UNADJ = 6.018050)")
+sm_plts = sqldf("SELECT * FROM sm_plt_trees GROUP BY PLT_CN")
+lg_plts = sqldf("SELECT * FROM lg_plt_trees GROUP BY PLT_CN")
 
-#plot(std_TPA_plts$LON, std_TPA_plts$LAT, pch = 'o', col = 'green')
-#par(new=TRUE)
-#plot(var_TPA_plts$LON, var_TPA_plts$LAT, pch = 'x', col = 'red')
-#par(new=FALSE)
+### we need a standard measure of trees per standard plot size. Where standard plot size is 6.018046 acres. Therefore, to get an estimate of 
+### tree count per standard plot we divide by the 6.018046 acres and round up to nearest integer
+### assuming that the counts of trees can be extrapolated (especially those of small diameter)
+### to the larger plot. @t.chang 10/26/2015
+### note: this is adjustment assumes analogous scaling to using a 
+### response variable such as basal area or tree per acre, which have been used routinely in silviculture/forestry (Avery and Burkhart 2002).  
+
+sm_lg = sqldf("SELECT lg_plts.* FROM lg_plts, sm_plts WHERE lg_plts.PLT_CN = sm_plts.PLT_CN")
+plot(std_TPA_plts$LON, std_TPA_plts$LAT, pch = 'o', col = 'green', xlim = c(xmin, xmax), ylim = c(ymin, ymax), ann = FALSE)
+par(new=TRUE)
+plot(var_TPA_plts$LON, var_TPA_plts$LAT, pch = 'x', col = 'red', xlim = c(xmin, xmax), ylim = c(ymin, ymax), ann = FALSE)
+title(xlab = 'LON (dd)')
+title(ylab = 'LAT (dd)')
+
+#plot(sm_lg$LON, sm_lg$LAT, pch = 2, cex = 0.5, xlim = c(xmin, xmax), ylim = c(ymin, ymax))
+par(new=FALSE)
 
 #hist(all_trees_bbox$TPA_UNADJ)# view histogram to see how many variable sized plots exist
 
