@@ -36,7 +36,7 @@ require(bit64)
 wd = "E:\\FIA\\"
 
 #Create a list of the column you want to reduce csv load time
-plot_scols = c("CN", "PLOT", "LAT", "LON", "ELEV", "MANUAL", "DESIGNCD", "STATECD", "INVYR") 
+plot_scols = c("CN", "PLOT", "LAT", "LON", "ELEV", "MANUAL", "DESIGNCD", "STATECD", "INVYR", "MEASYEAR") 
 tree_scols = c("CN", "PLT_CN", "PLOT", "SPCD", "TREE", "DIA", "HT", "DIAHTCD", "TPA_UNADJ", "STATUSCD", "CONDID") 
 cond_scols = c("PLT_CN","CONDID", "COND_STATUS_CD", "MICRPROP_UNADJ","SUBPPROP_UNADJ","MACRPROP_UNADJ","CONDPROP_UNADJ", "COND_NONSAMPLE_REASN_CD") 
 pop_stratum_assgn_scols = c("PLT_CN", "STRATUM_CN")
@@ -197,7 +197,7 @@ t_list = sqldf(sprintf("SELECT GENUS, SPECIES, COMMON_NAME, spcds.SPCD FROM spcd
 #half of it is forested then we multiply the total count by ~6 trees per acre, then we multiply by 0.5.
 #if it is measured on a microplot scale then we multiply the total by ~74 trees per acre and multiply by 0.5.
 
-query_select = "PLT_CN, MANUAL, CONDID, COND_STATUS_CD, STATECD, STATE_NAME, INVYR, START_INVYR, END_INVYR, LAT, LON, 
+query_select = "PLT_CN, MANUAL, CONDID, COND_STATUS_CD, STATECD, STATE_NAME, MEASYEAR, INVYR, START_INVYR, END_INVYR, LAT, LON, 
 		ELEV, ELEV * 0.3048 as 'ELEV_M', SPCD, DIA, DIA * 2.54 as 'DBH_CM', HT, HT * 0.3048 as 'HT_M', 
 		TPA_UNADJ,  MICRPROP_UNADJ,  
 		CASE WHEN SUBPPROP_UNADJ IS NULL THEN MICRPROP_UNADJ ELSE SUBPPROP_UNADJ END AS SUBPPROP_UNADJ
@@ -256,8 +256,12 @@ for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nro
 #lets write the pivot table as a single string to put into our sqldf command for reuse later
 sql_cmd_final = paste(sql_cmd, collapse=', ')
 
-class_trees = sqldf(sprintf("SELECT PLT_CN, STATE_NAME, INVYR, LAT, LON, ELEV, ELEV_M, COUNT(PLT_CN) AS ALL_TREES_TOTAL, SUM(BA_ACRE) * 0.2296 AS ALL_TREES_BA_M2HA, %s FROM %s GROUP BY PLT_CN",sql_cmd_final,db_name)) #query and create the pivot table
+class_trees = sqldf(sprintf("SELECT PLT_CN, STATE_NAME, INVYR, MEASYEAR, LAT, LON, ELEV, ELEV_M, COUNT(PLT_CN) AS ALL_TREES_TOTAL, SUM(BA_ACRE) * 0.2296 AS ALL_TREES_BA_M2HA, %s FROM %s GROUP BY PLT_CN",sql_cmd_final,db_name)) #query and create the pivot table
 class_trees[is.na(class_trees)] = as.numeric(0.0) #replace all the NA values with 0
+
+ncols = dim(class_trees)[2]
+class_trees[,3:ncols] = as.numeric(unlist(class_trees[,3:ncols]))
+class_trees[,1] = as.numeric(unlist(class_trees[,1])) #added this to allow sorting of the PLT_CNs
 
 #last check before adding the abiotic are removal of off PLT_CNs where values of abiotic variables seemed strange
 #PLT_CN 
