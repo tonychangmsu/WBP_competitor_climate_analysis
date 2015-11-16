@@ -1,12 +1,12 @@
-### Title: wbp_bbox_all_trees_classified_linked_08272015_metadata.txt
+### Title: wbp_bbox_all_trees_classified_linked_metadata.txt
 ### Author: Tony Chang
 ### Institution: Montana State University Department of Ecology
-### Date: 09-21-2015
+### Date: 11-16-2015
 '''
-This file describes the attribute fields of the wbp_bbox_all_trees_classified_linked_08272015.csv 
+This file describes the attribute fields of the wbp_bbox_all_trees_classified_linked.csv 
 file for reference and analysis. All response variables in this file were derived from the FIA
 dataset (http://apps.fs.fed.us/fiadb-downloads/datamart.html)
-using FIA_rSQL_v2_1.R script that will be posted on Github shortly for reproducibility. 
+using FIA_rSQL_v2.R script that will be posted on Github shortly for reproducibility. 
 
 This selection of response variables are bounded by the defined GYE bounding box of 
 
@@ -27,7 +27,7 @@ MANUAL <1.0 and DESIGNCD=1 was also utilized to increase sample size.
 Also integrated into the query are two additional variables | Basal Area and Stand Density Index defined as BA = 0.005454 * (DIA/2) when TREE.DIAHTCD =1
 9/30/2015 changes: Two outlier was located due to AWC100 = 100 suggesting plot was fuzzed into a water body. This point was removed and dataset updated. Total sample size is 2191
 10/06/2015 changes: FIA classifies trees of DIA <= 4.9" as smaller trees and uses a different microplot size to sample the counts, this was accounted for through re-classing CLASS1
-
+11/16/2015 changes:  Using COND_STATUS_CD = 1 to specify forested plots exclusively. Additionally, because some sub/micro plots are placed in partial conditions (i.e. half on a forested plot and half on a non-forested plot), then calculations relating to TPA (Trees Per Acre) and BA (Basal Area) are not the most accurate expansions of tree count within an area. This is adjusted for through application of the SUBPROP_UNADJ and MICRPROP_UNADJ adjustment factor values from the COND.CSV table. Finally, to relate the adjustment factors to a single plot (some plots have multiple adjustment factors depending on the year of measurement), we use the END_INVYR field from the POP_EVAL_GRP.CSV to note the latest year that the plot was completed in and take adjustment factor from that corresponding year.  
 =======================================================================================
 Data was further filtered for community analysis to include all competitors. 
 This does not include the FIA SEEDLING dataset. 
@@ -126,7 +126,7 @@ Standard layer depth are as follows (http://www.soilinfo.psu.edu/index.cgi?soil_
 Basal Area: 
 1. For each tree in the plot: BA = 0.005454 * (DIA)^2  where DIA would come from the TREE table and only use where TREE.DIAHTCD = 1 (which mean tree diameter was measured at DBH)
 
-2. To see how much BA/acre is represented by each tree:  BA * TREE.TPA_UNADJ
+2. To see how much BA/acre is represented by each tree:  BA * TREE.TPA_ADJ
 
 3. Then | sum the BA/acre of all the trees on the plot to get plot-level BA in ft2/acre
 
