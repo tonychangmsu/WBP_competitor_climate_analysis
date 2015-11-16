@@ -107,7 +107,7 @@ t_list = sqldf(sprintf("SELECT GENUS, SPECIES, COMMON_NAME, spcds.SPCD FROM spcd
 ######################################################################################
 
 # attempting to remove variable sized subplots to attain a more uniform subset of sample plots
-# however, small plots for sub 5" trees measured at 6.8' radius microplot are still prevalent and must be dealt with seperately using the 
+# however, small plots for sub 5" trees measured at 6.8' radius microplot are still prevalent and must be dealt with separately using the 
 # TPA adjustments (see below). 
 # generate map and table of variable sized plots and representative diameters
 # remove variable sized plots from all_trees_bbox
