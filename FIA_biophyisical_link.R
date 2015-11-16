@@ -106,9 +106,7 @@ out$PACK_6_1980_2010[out$PACK_6_1980_2010<0] = 0
 out$PACK_7_1980_2010[out$PACK_7_1980_2010<0] = 0
 out$SOILM_8_1980_2010[out$SOILM_8_1980_2010<0] = 0
 #loop or apply would be better, but for now this works @tchang 10.02.2015
-#post-hoc change at site PLT_CN = 5379587010690 and 11795987010690, sees that the fuzzing landed the point into a water body. 
-#out = out[-19] #remove occured in FIA_rSQL.R, so unneeded
-#out = out[-2113] 
+
 #last check
 dim(out)
 filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified_linked.csv'
