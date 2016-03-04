@@ -1,6 +1,7 @@
 #Title: FIA_biophyisical_link.R
 #Author: Tony Chang
 #Date:09.17.2015
+#Modified: 03.04.2015
 #Abstract: Merge the extracted point data with the collection of biophysical data
 
 ##############install required packages##############
