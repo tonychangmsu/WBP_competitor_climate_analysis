@@ -110,5 +110,12 @@ out$SOILM_8_1980_2010[out$SOILM_8_1980_2010<0] = 0
 
 #last check
 dim(out)
+out$BA_M2HA_ALL_OTHERS  =  round(out$BA_M2HA_ALL_OTHERS,2)
+out$ALL_TREES_BA_M2HA  =  round(out$ALL_TREES_BA_M2HA,2)
+out$PIAL_BA_M2HA  =  round(out$PIAL_BA_M2HA,2)
+out$ABLA_BA_M2HA  =  round(out$ABLA_BA_M2HA,2)
+out$PIEN_BA_M2HA  =  round(out$PIEN_BA_M2HA,2)
+out$PSME_BA_M2HA  =  round(out$PSME_BA_M2HA,2)
+out$PICO_BA_M2HA  =  round(out$PICO_BA_M2HA,2)
 filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified_linked.csv'
 write.table(out, file =sprintf('%s', filename), sep = ',', row.names = FALSE)

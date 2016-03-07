@@ -2,7 +2,7 @@
 #Title: FIA_rSQL_v2.R
 #Version: 4.0
 #Author: Tony Chang
-#Date: 11/16/2015, Modified Date 03/04/2016
+#Date: 11/16/2015, Modified Date 03/07/2016
 #Abstract:  
 #			Version 1
 #			Querying through the FIA dataset on using the sqldf library in R version 3.2.0 
@@ -235,7 +235,7 @@ for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nro
   #now generate a summary of the average DBH and standard deviation of all the trees in cm 
   temp_sql_cmd[2] = paste('AVG(CASE WHEN SPCD = ',spcd_list[i],' THEN DBH_CM END) AS ',names_list[i],'_AVG_DBH_CM', sep="")
   temp_sql_cmd[3] = paste('sqrt(VARIANCE(CASE WHEN SPCD = ',spcd_list[i],' THEN DBH_CM END)) AS ',names_list[i],'_STDEV_DBH_CM', sep="")
-  temp_sql_cmd[4] = paste('ROUND(SUM(CASE WHEN SPCD = ',spcd_list[i],' THEN BA_ACRE END) * 0.2296,2)  AS ',names_list[i],'_BA_M2HA', sep="")
+  temp_sql_cmd[4] = paste('ROUND(SUM(CASE WHEN SPCD = ',spcd_list[i],' THEN BA_ACRE END) * 0.2296, 5)  AS ',names_list[i],'_BA_M2HA', sep="")
   temp_sql_cmd[5] = paste('(sqrt(SUM(CASE WHEN SPCD = ',spcd_list[i],' THEN (DBH_CM*DBH_CM) END)
                           /COUNT(CASE WHEN SPCD = ',spcd_list[i],' THEN PLT_CN END)))  
                            AS ',names_list[i],'_QMD_CM', sep="")
@@ -248,7 +248,7 @@ for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nro
     #implement another for loop for each class type
     #adding an if statement so we can count up the BA_M2HA for all within the size class
       sumry_first = paste('COUNT(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN PLT_CN END) AS ',names_list[i],'_CLASS',j, sep="") #repeat this for all iterations
-      sumry_second = paste('ROUND(SUM(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN BA_ACRE END) * 0.2296, 2)  AS ',names_list[i],'_CLASS',j, '_BA_M2HA', sep="") #repeat this for all iterations
+      sumry_second = paste('ROUND(SUM(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],'THEN BA_ACRE END) * 0.2296, 5)  AS ',names_list[i],'_CLASS',j, '_BA_M2HA', sep="") #repeat this for all iterations
 	  sumry_third = paste('CAST(ROUND(SUM(CASE WHEN SPCD = ',spcd_list[i],' AND', class[j],' THEN TPA_ADJ END) * 2.47105) as INT) AS ',names_list[i],'_CLASS',j,'_TPH', sep="")
       temp_sql_cmd[j+n_metrics] = paste(sumry_first, sumry_second, sumry_third, sep=', ')    
   }
@@ -257,7 +257,7 @@ for (i in 1:nrows) #implement a for loop from 1 to the total number of rows (nro
 #lets write the pivot table as a single string to put into our sqldf command for reuse later
 sql_cmd_final = paste(sql_cmd, collapse=', ')
 
-class_trees = sqldf(sprintf("SELECT PLT_CN, STATE_NAME, INVYR, MEASYEAR, LAT, LON, ELEV, ELEV_M, COUNT(PLT_CN) AS ALL_TREES_TOTAL, ROUND(SUM(BA_ACRE) * 0.2296,2) AS ALL_TREES_BA_M2HA, %s FROM %s GROUP BY PLT_CN",sql_cmd_final,db_name)) #query and create the pivot table
+class_trees = sqldf(sprintf("SELECT PLT_CN, STATE_NAME, INVYR, MEASYEAR, LAT, LON, ELEV, ELEV_M, COUNT(PLT_CN) AS ALL_TREES_TOTAL, ROUND(SUM(BA_ACRE) * 0.2296, 5) AS ALL_TREES_BA_M2HA, %s FROM %s GROUP BY PLT_CN",sql_cmd_final,db_name)) #query and create the pivot table
 class_trees[is.na(class_trees)] = as.numeric(0.0) #replace all the NA values with 0
 
 ncols = dim(class_trees)[2]
@@ -275,7 +275,7 @@ for (i in 1:length(bad_cns)){
 }
 query = paste(v, collapse=' AND ')
 out = sqldf(sprintf("SELECT * FROM class_trees WHERE %s", query))
-
+out$BA_M2HA_ALL_OTHERS  =  round((out$ALL_TREES_BA_M2HA - out$PIAL_BA_M2HA - out$ABLA_BA_M2HA - out$PIEN_BA_M2HA - out$PSME_BA_M2HA - out$PICO_BA_M2HA),3)
 #total number of samples with removal of dead trees drops down to 2216 from the original sample size of 2355
 #update: with new queries, total count of plots is 2173 now @t.chang 2015.11.16
 
