@@ -111,6 +111,6 @@ out$SOILM_8_1980_2010[out$SOILM_8_1980_2010<0] = 0
 #last check
 dim(out)
 out$BA_M2HA_ALL_OTHERS  =  round(out$BA_M2HA_ALL_OTHERS,2)
-
+out$BA_M2HA_ALL_CONI  =  round(out$BA_M2HA_ALL_CONI,2)
 filename = 'E:\\Data_requests\\adhikari_08252015\\github_out\\wbp_bbox_all_trees_classified_linked.csv'
 write.table(out, file =sprintf('%s', filename), sep = ',', row.names = FALSE)

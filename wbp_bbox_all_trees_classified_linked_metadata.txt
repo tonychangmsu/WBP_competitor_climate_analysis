@@ -177,7 +177,8 @@ ELEV_M : Elevation in Meter
 * tree_abbreviation_CLASS2 : Count of CLASS2 trees at plot
 * tree_abbreviation_CLASS3 : Count of CLASS3 trees at plot
 * tree_abbreviation_CLASS4 : Count of CLASS4 trees at plot
-
+* BA_M2HA_ALL_OTHERS : Sum of basal areas of all non-specified trees (meters squared per hectare)
+* BA_M2HA_ALL_CONI : Sum of basal areas of PIEN, PICO, ABLA, PSME (meters squared per hectare)
 =======================================================================================
 # Climate data (predictor data)
 * TMIN1-12_startyear_endyear : 30 year normal minimum temperatures in C 
